@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "db": "java -Djava.library.path=./data/DynamoDBLocal_lib -jar ./data/DynamoDBLocal.jar -sharedDb -port 8787",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
