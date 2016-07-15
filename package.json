@@ -1,7 +1,7 @@
 {
   "name": "catalog",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sample REST API nodejs service with AWS dynamodb database",
   "main": "index.js",
   "scripts": {
     "start": "node index",
@@ -11,8 +11,8 @@
     "test-functional": "DB_URL=http://localhost:8787 ACCESS_KEY=test SECRET_KEY=test ./node_modules/.bin/mocha test/functional --recursive",
     "test-unit": "./node_modules/.bin/mocha test/unit --recursive"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["aws", "dynamodb", "nodejs", "local", "catalog"],
+  "author": "Oleg Makiienko",
   "license": "ISC",
   "devDependencies": {
     "co-mocha": "^1.1.2",
