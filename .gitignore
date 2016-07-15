@@ -1,0 +1,3 @@
+node_modules
+# Will have dynamodb executable
+data
