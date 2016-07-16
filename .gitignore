@@ -1,3 +1,4 @@
 node_modules
-# Will have dynamodb executable
 data
+*.db
+npm-debug.log

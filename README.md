@@ -34,3 +34,8 @@ Specify port for running application:
 ```
 ENV PORT=4545 npm start
 ```
+
+# Assumptions
+
+- To see all assumptions in projest ook for ASSUMPTION in code
+

@@ -4,6 +4,7 @@
   "description": "Sample REST API nodejs service with AWS dynamodb database",
   "main": "index.js",
   "scripts": {
+    "jshint": "./node_modules/.bin/jshint lib service *.js",
     "start": "node index",
     "dev": "DB_URL=http://localhost:8787 node index",
     "db": "java -Djava.library.path=./data/DynamoDBLocal_lib -jar ./data/DynamoDBLocal.jar -port 8787",
@@ -21,14 +22,20 @@
   "author": "Oleg Makiienko",
   "license": "ISC",
   "devDependencies": {
-    "co-mocha": "^1.1.2",
-    "co-supertest": "0.0.10",
+    "co-famo": "^2.0.0",
+    "jshint": "^2.9.2",
     "mocha": "^2.5.3",
+    "random-js": "^1.0.8",
+    "sinon": "^1.17.4",
     "supertest": "^1.2.0"
   },
   "dependencies": {
+    "async": "^2.0.0",
     "aws-sdk": "^2.4.7",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "jsonschema": "^1.1.0",
-    "koa": "^1.2.0"
+    "morgan": "^1.7.0",
+    "node-uuid": "^1.4.7"
   }
 }

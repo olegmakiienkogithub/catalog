@@ -1,13 +1,11 @@
 'use strict';
 
-const supertest = require('co-supertest');
+const supertest = require('supertest');
 const settings = require('../../lib/settings');
 const app = require('../../app');
-
-let server = app.listen(settings.PORT);
-console.log(`Test application on port: ${settings.PORT}`);
+const factory = require('../factory');
 
 exports = module.exports = {
-    server: server,
-    request: supertest.agent(server)
+    request: supertest(app.app),
+    factory: factory
 };
