@@ -1,5 +1,14 @@
 # Setup 
 
+Require nodejs v 4.2 to be installed.
+
+You could install `node` with `nvm` https://github.com/creationix/nvm
+Then run:
+```
+nvm install 4.2
+nvm use 4.2
+```
+
 ## Database
 Download local db. It will create directory `data` with dynamodb executables:
 ```
