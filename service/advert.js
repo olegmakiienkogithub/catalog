@@ -114,4 +114,56 @@ service.deleteById = function(db, data, cb) {
     });
 };
 
+/*
+    Update
+ */
+service.update = function(db, id, data, cb) {
+    let validationResult = v.validate(id, {
+        '$ref': '/definitions/advert/id'
+    });
+    if(!validationResult.valid) {
+        return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
+    }
+
+    let carSchema = {
+        type: 'object',
+        additionalProperties: false,
+        required: [
+            'title', 'fuel', 'price', 'new'
+        ],
+        properties: {
+            title: { '$ref': '/definitions/advert/title' },
+            fuel: { '$ref': '/definitions/advert/fuel' },
+            price: { '$ref': '/definitions/advert/price' },
+            new: { type: 'boolean', enum: [true] }
+        }
+    };
+    if(!data.new) {
+        carSchema.required.push('mileage');
+        carSchema.required.push('firstRegistration');
+        carSchema.properties.new.enum = [false];
+        carSchema.properties.mileage =  { '$ref': '/definitions/advert/mileage' };
+        carSchema.properties.firstRegistration = { '$ref': '/definitions/advert/firstRegistration' };
+    }
+
+    validationResult = v.validate(data, carSchema);
+
+    if(!validationResult.valid) {
+        console.log(carSchema, validationResult.errors);
+        return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
+    }
+
+    db.getById(id, (e) => {
+        if(e) { 
+            return cb(e); 
+        }
+        db.update(id, data, (errorUpdate, responseUpdate) => {
+            if(errorUpdate) { 
+                return cb(errorUpdate); 
+            }
+            cb(null, responseUpdate);
+        });
+    });
+};
+
 exports = module.exports = service;

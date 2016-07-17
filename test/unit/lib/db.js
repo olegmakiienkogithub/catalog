@@ -86,4 +86,83 @@ describe('lib/db', function() {
             });
         });
     });
+
+    describe('_buildUpdateExpression', function() {
+        it('basic', function(done) {
+            let instance = new subject({}, {});
+            let result = instance._buildUpdateExpression({ a: 1, b: '2 ', c: true});
+            assert.deepEqual(result, { 
+                UpdateExpression: 'set a = :a, b = :b, c = :c',
+                ExpressionAttributeNames: {},
+                ExpressionAttributeValues: { ':a': 1, ':b': '2 ', ':c': true } 
+            });
+            done();
+        });
+
+        it('with reserved word', function(done) {
+            let instance = new subject({}, {});
+            let result = instance._buildUpdateExpression({ a: 1, new: true});
+            assert.deepEqual(result, { 
+                UpdateExpression: 'set a = :a, #n = :n',
+                ExpressionAttributeNames: {
+                    "#n": "new"
+                },
+                ExpressionAttributeValues: { ':a': 1, ':n': true } 
+            });
+            done();
+        });
+    });
+
+    describe('update', function() {
+
+        it('error proxy', function(done) {
+            let instance = new subject({}, {
+                update: (sc, cb) => { cb('error'); }
+            });
+            instance.update(null, {}, (e) => {
+                assert.equal(e, 'error');
+                done();
+            });
+        });
+
+        it('error when no Attributes set', function(done) {
+            let calledWith = null;
+            // stubbed instance
+            let instance = new subject({}, {
+                update: (sc, cb) => { calledWith = sc; cb(null, {}); }
+            });
+            instance.update(null, {}, (e) => {
+                assert.equal(e, 'Item not returned in response');
+                done();
+            });
+        });
+
+        it('call db update with provided schema and prepared query (with new)', function(done) {
+            let calledWith = null;
+            // stubbed instance
+            let instance = new subject({}, {
+                update: (sc, cb) => { calledWith = sc; cb(null, {Attributes: {}}); }
+            });
+
+            instance.update('123', { test: 'data', new: 'yes'}, () => {
+                assert.deepEqual(calledWith, {
+                    Key: {
+                        id: '123'
+                    },
+                    ReturnValues: 'ALL_NEW',
+                    TableName: 'advert',
+                    ExpressionAttributeNames: {
+                        '#n': 'new'
+                    },
+                    ExpressionAttributeValues: {
+                        ':n': 'yes',
+                        ':test': 'data'
+                    },
+                    UpdateExpression: 'set test = :test, #n = :n'
+                });
+                done();
+            });
+        });
+    });
+
 });

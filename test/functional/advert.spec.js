@@ -88,8 +88,6 @@ describe('Create advert: POST /advert', function() {
                     .expect(200)
                     .end(function(err, response){
                         if (err) { return cb(err); }
-                        console.log(response.body);
-
                         assertAdvert(advert, response.body.data);
                         cb(null, id);
                     });
@@ -127,6 +125,54 @@ describe('Create advert: POST /advert', function() {
             .get(`/advert/${id}`)
             .expect(400)
             .end(done);
+    });
+
+    it('update not existing car give 400', function(done){
+        let id = uuid.v4();
+        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        helper.request
+            .post(`/advert/${id}`)
+            .send(advert)
+            .expect(400)
+            .end(done);
+    });
+
+    it('create car, update car, get it', function(done){
+        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        async.waterfall([
+            (cb) => {
+                helper.request
+                    .post('/advert')
+                    .send(advert)
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        cb(null, response.body.data.id);
+                    });
+            },
+            (id, cb) => {
+                advert.mileage = 100500;
+                helper.request
+                    .post(`/advert/${id}`)
+                    .send(advert)
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        assertAdvert(advert, response.body.data);
+                        cb(null, id);
+                    });
+            },
+            (id, cb) => {
+                helper.request
+                    .get(`/advert/${id}`)
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        assertAdvert(advert, response.body.data);
+                        cb(null, id);
+                    });
+            },
+        ], done); 
     });
 
 });
