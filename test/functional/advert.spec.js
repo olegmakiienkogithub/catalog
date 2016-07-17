@@ -175,4 +175,103 @@ describe('Create advert: POST /advert', function() {
         ], done); 
     });
 
+    describe('get all', function() {
+
+        function createAdverts(list, cb) {
+            let runners = [];
+            for(let i of list) {
+                runners.push(function(cb){
+                    helper.request
+                        .post('/advert')
+                        .send(i)
+                        .expect(200)
+                        .end(function(err, response){
+                            if (err) { return cb(err); }
+                            cb(null);
+                        });
+                });
+            }
+            async.waterfall(runners, cb);
+        }
+
+        it('create 3 adverts, get ordered by title', function(done){
+            createAdverts([
+                helper.factory.attributes('usedAdvert', { title: 'Second'}, { noId: true }),
+                helper.factory.attributes('usedAdvert', { title: 'Third'}, { noId: true }),
+                helper.factory.attributes('newAdvert', { title: 'First'}, { noId: true })
+            ], () => {
+                helper.request
+                    .get('/advert?sort=title')                        
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        assert.equal(response.body.data[0].title, 'First');
+                        assert.equal(response.body.data[1].title, 'Second');
+                        assert.equal(response.body.data[2].title, 'Third');
+                        done();
+                    });
+            });
+        });
+
+        it('create 3 adverts, get ordered by fuel type', function(done){
+            createAdverts([
+                helper.factory.attributes('usedAdvert', { fuel: 'gasoline'}, { noId: true }),
+                helper.factory.attributes('usedAdvert', { fuel: 'gasoline'}, { noId: true }),
+                helper.factory.attributes('newAdvert', { fuel: 'diesel'}, { noId: true })
+            ], () => {
+                helper.request
+                    .get('/advert?sort=fuel')                        
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        assert.equal(response.body.data[0].fuel, 'diesel');
+                        assert.equal(response.body.data[1].fuel, 'gasoline');
+                        assert.equal(response.body.data[2].fuel, 'gasoline');
+                        done();
+                    });
+            });
+        });
+
+        it('create 3 adverts, get ordered by price', function(done){
+            createAdverts([
+                helper.factory.attributes('usedAdvert', { price: 100 }, { noId: true }),
+                helper.factory.attributes('usedAdvert', { price: 10 }, { noId: true }),
+                helper.factory.attributes('newAdvert', { price: 70 }, { noId: true })
+            ], () => {
+                helper.request
+                    .get('/advert?sort=price')                        
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        assert.equal(response.body.data[0].price, 10);
+                        assert.equal(response.body.data[1].price, 70);
+                        assert.equal(response.body.data[2].price, 100);
+                        done();
+                    });
+            });
+        });
+
+        it('create 4 adverts, get default order by id', function(done){
+            createAdverts([
+                helper.factory.attributes('usedAdvert', { }, { noId: true }),
+                helper.factory.attributes('usedAdvert', { }, { noId: true }),
+                helper.factory.attributes('newAdvert', { }, { noId: true }),
+                helper.factory.attributes('newAdvert', { }, { noId: true })
+            ], () => {
+                helper.request
+                    .get('/advert')                        
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        let ids = response.body.data.map(i => i.id);
+                        let copy = Object.assign([], ids);
+                        copy.sort();
+                        assert.deepEqual(ids, copy);
+                        done();
+                    });
+            });
+        });
+
+    });
+
 });

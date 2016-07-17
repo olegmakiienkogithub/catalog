@@ -5,10 +5,17 @@ const settings = require('../../lib/settings');
 const server = require('../../app');
 const factory = require('../factory');
 
-
-before(function(done) {
+beforeEach(function(done) {
     console.log('Before ....');
-    server.init(done);
+    server.db.init(done);
+});
+
+/*
+    There are delete all, so will drop test db each time
+ */
+afterEach(function(done) {
+    console.log('After ....');
+    server.db._deleteTables(done);
 });
 
 exports = module.exports = {

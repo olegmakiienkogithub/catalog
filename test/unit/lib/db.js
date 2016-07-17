@@ -19,6 +19,18 @@ describe('lib/db', function() {
         });
     });
 
+    it('_deleteTables call deleteTable with provided schema', function(done) {
+        let calledWith = null;
+        // stubbed instance
+        let instance = new subject({
+            deleteTable: (sc, cb) => { calledWith = sc; cb(); }
+        }, { });
+        instance._deleteTables(() => {
+            assert.deepEqual(calledWith, {TableName: 'advert'});
+            done();
+        });
+    });
+
     it('_listTables call listTables', function(done) {
         let calledWith = null;
         let dummySchema = { dummy: 'ok' };
@@ -159,6 +171,45 @@ describe('lib/db', function() {
                         ':test': 'data'
                     },
                     UpdateExpression: 'set test = :test, #n = :n'
+                });
+                done();
+            });
+        });
+    });
+
+    describe('getAll', function(){
+
+        it.only('with sorting' , function(done){
+            let calledWith = null;
+            // stubbed instance
+            let instance = new subject({}, {
+                query: (schema, cb) => { calledWith = schema; cb(null , {Items: []}); }
+            });
+            instance.getAll({sort: 'title'}, () => {
+                assert.deepEqual(calledWith, {
+                    TableName: 'advert',
+                    IndexName: `title_index`,
+                    KeyConditionExpression: 'active = :active',
+                    ExpressionAttributeValues: { ':active': 'yes' },
+                    ScanIndexForward: true
+                });
+                done();
+            });
+        });
+
+        it('with default sorting' , function(done){
+            let calledWith = null;
+            // stubbed instance
+            let instance = new subject({}, {
+                query: (schema, cb) => { calledWith = schema; cb(null , {Items: []}); }
+            });
+            instance.getAll({}, () => {
+                assert.deepEqual(calledWith, {
+                    TableName: 'advert',
+                    IndexName: `id_index`,
+                    KeyConditionExpression: 'active = :active',
+                    ExpressionAttributeValues: { ':active': 'yes' },
+                    ScanIndexForward: true
                 });
                 done();
             });

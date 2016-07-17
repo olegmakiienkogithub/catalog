@@ -24,7 +24,7 @@ function dateToShort(date) {
  */
 factory.define('advert', function() {
     this.id                 = random.integer(100, 1000000);
-    this.title              = random.hex(20);
+    this.title              = `${random.string(2, 'ABCDEF')}-${random.string(2, '_ABCDEF01234456789')}`;
     this.fuel               = random.pick(settings.fuelTypes);
     this.price              = random.integer(1, 1000000);
     this.new                = true;

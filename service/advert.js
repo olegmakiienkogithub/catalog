@@ -154,4 +154,23 @@ service.update = function(db, id, data, cb) {
     }));
 };
 
+service.getAll = function(db, data, cb) {
+    let schema = {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+            sort: { '$ref': '/definitions/sorting' }
+        }
+    };
+    let validationResult = v.validate(data, schema);
+
+    if(!validationResult.valid) {
+        return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
+    }
+    
+    db.getAll(data, w.error(cb ,(list) => {
+        cb(null, list);
+    }));
+};
+
 exports = module.exports = service;

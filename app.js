@@ -6,7 +6,6 @@ const settings = require('./lib/settings');
 const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
-const async = require('async');
 
 let db = new DynamoDb(new AWS.DynamoDB(), new AWS.DynamoDB.DocumentClient());
 let app = express();
@@ -30,3 +29,4 @@ function init(callback) {
  */
 exports.init = init;
 exports.app = app;
+exports.db = db;

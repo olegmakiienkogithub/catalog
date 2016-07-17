@@ -29,6 +29,17 @@ exports.setup = function(app, db) {
         });
     });
     /*
+        Get all
+     */
+    app.get('/advert', function(req, res) {
+        advertService.getAll(db, req.query, (e, data) => {
+            if(e) {
+                return res.status(400).json({ error: e });
+            }
+            res.json({ data: data });
+        });
+    });
+    /*
         Get by ID
      */
     app.get('/advert/:id', function(req, res) {
