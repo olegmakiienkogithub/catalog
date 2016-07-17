@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const subject = require('../../../service/advert');
+const subject = require('../../../action/advert');
 const factory = require('../../factory');
 const random = require('random-js')();
 const settings = require('../../../lib/settings');
@@ -9,14 +9,14 @@ const sinon = require('sinon');
 const uuid = require('node-uuid');
 const async = require('async');
 
-describe('service/advert', function() {
+describe('action/advert', function() {
 
     describe('create', function() {
 
         describe('validation', function() {
 
             it('additionalProperty: false', function(done) {
-                subject.create({}, { dummy: 1}, (e, data) => {
+                subject.create({}, { dummy: 1}, (e) => {
                     assert.notEqual(e.indexOf('instance additionalProperty "dummy" exists in instance when not allowed'), -1);
                     done();
                 });
@@ -25,7 +25,7 @@ describe('service/advert', function() {
             function requiredField(factoryName, name) {
                 it(`requires ${name} for a ${factoryName} car`, function(done){
                     let advert = factory.attributes(factoryName, {}, { omit: name });
-                    subject.create({}, advert, (e, data) => {
+                    subject.create({}, advert, (e) => {
                         assert.ok(e.indexOf(`instance requires property "${name}"`) > -1);
                         done();
                     });
@@ -36,7 +36,7 @@ describe('service/advert', function() {
                 it(`validates "${name}" for a "${factoryName}" car, expect message: "${message}"`, function(done){
                     let advert = factory.attributes(factoryName);
                     advert[name] = value;
-                    subject.create({}, advert, (e, data) => {
+                    subject.create({}, advert, (e) => {
                         assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
                         done();
                     });
@@ -134,7 +134,7 @@ describe('service/advert', function() {
         describe('validation', function() {
 
             it(`requires Id`, function(done){
-                subject.getById({}, {}, (e, data) => {
+                subject.getById({}, {}, (e) => {
                     assert.ok(e.indexOf(`instance requires property "id"`) > -1, `"${e}" to include id`);
                     done();
                 });
@@ -145,7 +145,7 @@ describe('service/advert', function() {
                 it(`validates format "${name}", expect message: "${message}"`, function(done){
                     let data = {};
                     data[name] = value;
-                    subject.getById({}, data, (e, data) => {
+                    subject.getById({}, data, (e) => {
                         assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
                         done();
                     });
@@ -179,7 +179,7 @@ describe('service/advert', function() {
                 getById: (id, cb) => {
                     cb('error string');
                 }
-            }, { id: id }, (e, data) => {
+            }, { id: id }, (e) => {
                 assert.equal(e, 'error string');
                 done();
             });
@@ -192,7 +192,7 @@ describe('service/advert', function() {
         describe('validation', function() {
 
             it(`requires Id`, function(done){
-                subject.deleteById({}, {}, (e, data) => {
+                subject.deleteById({}, {}, (e) => {
                     assert.ok(e.indexOf(`instance requires property "id"`) > -1, `"${e}" to include id`);
                     done();
                 });
@@ -203,7 +203,7 @@ describe('service/advert', function() {
                 it(`validates format "${name}", expect message: "${message}"`, function(done){
                     let data = {};
                     data[name] = value;
-                    subject.deleteById({}, data, (e, data) => {
+                    subject.deleteById({}, data, (e) => {
                         assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
                         done();
                     });
@@ -236,13 +236,12 @@ describe('service/advert', function() {
 
         it('delete record, not found error', function(done) {
             let id = uuid.v4();
-            let dbResponse = { };
             
             subject.deleteById({
                 getById: (id, cb) => {
                     cb('error');
                 }
-            }, { id: id }, (e, data) => {
+            }, { id: id }, (e) => {
                 assert.equal(e, 'error');
                 done();
             });
@@ -258,7 +257,7 @@ describe('service/advert', function() {
                 it(`validates format "${name}", expect message: "${message}"`, function(done){
                     let data = {};
                     data[name] = value;
-                    subject.getAll({}, data, (e, data) => {
+                    subject.getAll({}, data, (e) => {
                         assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
                         done();
                     });

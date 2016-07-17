@@ -4,7 +4,7 @@
   "description": "Sample REST API nodejs service with AWS dynamodb database",
   "main": "index.js",
   "scripts": {
-    "jshint": "./node_modules/.bin/jshint lib service *.js",
+    "jshint": "./node_modules/.bin/jshint lib action test *.js",
     "start": "node index",
     "dev": "DB_URL=http://localhost:8787 node index",
     "db": "java -Djava.library.path=./data/DynamoDBLocal_lib -jar ./data/DynamoDBLocal.jar -port 8787",

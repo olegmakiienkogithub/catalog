@@ -33,7 +33,6 @@ describe('lib/db', function() {
 
     it('_listTables call listTables', function(done) {
         let calledWith = null;
-        let dummySchema = { dummy: 'ok' };
         // stubbed instance
         let instance = new subject({
             listTables: (cb) => { calledWith = true; cb(); }

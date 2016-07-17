@@ -2,9 +2,6 @@
 
 const assert = require('assert');
 const helper = require('./helper');
-const AWS = require('../../lib/aws');
-const random = require('random-js')();
-const settings = require('../../lib/settings');
 const async = require('async');
 const uuid = require('node-uuid');
 
@@ -185,7 +182,7 @@ describe('Create advert: POST /advert', function() {
                         .post('/advert')
                         .send(i)
                         .expect(200)
-                        .end(function(err, response){
+                        .end(function(err){
                             if (err) { return cb(err); }
                             cb(null);
                         });
@@ -204,7 +201,7 @@ describe('Create advert: POST /advert', function() {
                     .get('/advert?sort=title')                        
                     .expect(200)
                     .end(function(err, response){
-                        if (err) { return cb(err); }
+                        if (err) { return done(err); }
                         assert.equal(response.body.data[0].title, 'First');
                         assert.equal(response.body.data[1].title, 'Second');
                         assert.equal(response.body.data[2].title, 'Third');
@@ -223,7 +220,7 @@ describe('Create advert: POST /advert', function() {
                     .get('/advert?sort=fuel')                        
                     .expect(200)
                     .end(function(err, response){
-                        if (err) { return cb(err); }
+                        if (err) { return done(err); }
                         assert.equal(response.body.data[0].fuel, 'diesel');
                         assert.equal(response.body.data[1].fuel, 'gasoline');
                         assert.equal(response.body.data[2].fuel, 'gasoline');
@@ -242,7 +239,7 @@ describe('Create advert: POST /advert', function() {
                     .get('/advert?sort=price')                        
                     .expect(200)
                     .end(function(err, response){
-                        if (err) { return cb(err); }
+                        if (err) { return done(err); }
                         assert.equal(response.body.data[0].price, 10);
                         assert.equal(response.body.data[1].price, 70);
                         assert.equal(response.body.data[2].price, 100);
@@ -262,7 +259,7 @@ describe('Create advert: POST /advert', function() {
                     .get('/advert')                        
                     .expect(200)
                     .end(function(err, response){
-                        if (err) { return cb(err); }
+                        if (err) { return done(err); }
                         let ids = response.body.data.map(i => i.id);
                         let copy = Object.assign([], ids);
                         copy.sort();
