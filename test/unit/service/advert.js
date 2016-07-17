@@ -156,8 +156,22 @@ describe('service/advert', function() {
             wrongField('id', '', 'instance.id does not conform to the "uuid" format');
             wrongField('id', '123-123-123-123', 'instance.id does not conform to the "uuid" format');
             wrongField('id', uuid.v4() + '1', 'instance.id does not conform to the "uuid" format');
-
         });
+
+        it('get record', function(done) {
+            let id = uuid.v4();
+            let dbResponse = { Item: {a: 'b'} };
+            
+            subject.getById({
+                getById: (id, cb) => {
+                    cb(null, dbResponse);
+                }
+            }, { id: id }, (e, data) => {
+                assert.deepEqual(data, dbResponse.Item);
+                done();
+            });
+        });
+
     });
 
 });
