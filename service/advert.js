@@ -153,7 +153,9 @@ service.update = function(db, id, data, cb) {
         }));
     }));
 };
-
+/*
+    List all
+ */
 service.getAll = function(db, data, cb) {
     let schema = {
         type: 'object',

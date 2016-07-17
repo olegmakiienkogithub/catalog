@@ -250,4 +250,37 @@ describe('service/advert', function() {
 
     });
 
+    describe('list all', function() {
+
+        describe('validation', function() {
+
+            function wrongField(name, value, message) {
+                it(`validates format "${name}", expect message: "${message}"`, function(done){
+                    let data = {};
+                    data[name] = value;
+                    subject.getAll({}, data, (e, data) => {
+                        assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
+                        done();
+                    });
+                });
+            }
+
+            wrongField('sort', null, 'instance.sort is not of a type(s) string');
+            wrongField('sort', '', 'instance.sort is not one of enum values: id,title,price,fuel');
+            wrongField('sort', 'test', 'instance.sort is not one of enum values: id,title,price,fuel');
+        });
+
+        it('return records', function(done) {
+            let dbResult = [{a: 1}, {b: 2}];
+            subject.getAll({
+                getAll: (id, cb) => {
+                    cb(null, [{a: 1}, {b: 2}]);
+                }
+            }, {}, (e, data) => {
+                assert.deepEqual(data, dbResult);
+                done();
+            });
+        });
+    });
+
 });
