@@ -179,7 +179,7 @@ describe('lib/db', function() {
 
     describe('getAll', function(){
 
-        it.only('with sorting' , function(done){
+        it('with sorting' , function(done){
             let calledWith = null;
             // stubbed instance
             let instance = new subject({}, {
