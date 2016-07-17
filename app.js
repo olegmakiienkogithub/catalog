@@ -10,7 +10,7 @@ const routes = require('./routes');
 let db = new DynamoDb(new AWS.DynamoDB(), new AWS.DynamoDB.DocumentClient());
 let app = express();
 
-app.use(bodyParser());
+app.use(bodyParser.json());
 routes.setup(app, db);
 
 function init(callback) {
