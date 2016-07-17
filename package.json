@@ -4,13 +4,14 @@
   "description": "Sample REST API nodejs service with AWS dynamodb database",
   "main": "index.js",
   "scripts": {
-    "jshint": "./node_modules/.bin/jshint lib action test *.js",
     "start": "node index",
     "dev": "DB_URL=http://localhost:8787 node index",
     "db": "java -Djava.library.path=./data/DynamoDBLocal_lib -jar ./data/DynamoDBLocal.jar -port 8787",
     "test": "npm run test-unit && npm run test-functional",
     "test-functional": "DB_URL=http://localhost:8787 ACCESS_KEY=test SECRET_KEY=test ./node_modules/.bin/mocha test/functional --recursive",
-    "test-unit": "./node_modules/.bin/mocha test/unit --recursive"
+    "test-unit": "./node_modules/.bin/mocha test/unit --recursive",
+    "jshint": "./node_modules/.bin/jshint lib action test *.js",
+    "watch-test": "./node_modules/.bin/mocha --watch test/unit --recursive"
   },
   "keywords": [
     "aws",
