@@ -2,10 +2,16 @@
 
 const supertest = require('supertest');
 const settings = require('../../lib/settings');
-const app = require('../../app');
+const server = require('../../app');
 const factory = require('../factory');
 
+
+before(function(done) {
+    console.log('Before ....');
+    server.init(done);
+});
+
 exports = module.exports = {
-    request: supertest(app.app),
+    request: supertest(server.app),
     factory: factory
 };

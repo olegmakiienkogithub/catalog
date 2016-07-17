@@ -14,21 +14,19 @@ let app = express();
 app.use(bodyParser());
 routes.setup(app, db);
 
-function start() {
-    async.waterfall([
-        (callback) => {
-            db.init(callback);
-        },
-        (callback) => {
-            app.listen(settings.PORT);
-            console.log(`Server listening on port ${settings.PORT} in ${app.settings.env} mode`);
-            callback();
-        },
-    ]);
+function init(callback) {
+    db.init(function(e) {
+        if(e) {
+            return callback(e);
+        }
+        callback(null, {
+            PORT: settings.PORT
+        });
+    });
 }
 
 /*
     Exports
  */
-exports.start = start;
+exports.init = init;
 exports.app = app;

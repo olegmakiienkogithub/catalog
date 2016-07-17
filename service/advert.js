@@ -2,6 +2,7 @@
 
 const uuid = require('node-uuid');
 const v = require('../lib/validator');
+const w = require('../lib/wrap');
 
 const service = {};
 /*
@@ -50,9 +51,9 @@ service.create = function(db, data, cb) {
         Execute
      */
     data.id = uuid.v4(); // ASSUMPTION Id's will be genarted by server
-    db.create(data, () => {
+    db.create(data, w.error(cb, () => {
         cb(null, data); // return back full object
-    });
+    }));
 };
 /*
     Get by ID 
@@ -73,10 +74,9 @@ service.getById = function(db, data, cb) {
     if(!validationResult.valid) {
         return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
     }
-    db.getById(data.id, (e, record) => {
-        if(e) { return cb(e); }
+    db.getById(data.id, w.error(cb ,(record) => {
         cb(null, record); // return back full object
-    });
+    }));
 };
 
 /*
@@ -101,17 +101,11 @@ service.deleteById = function(db, data, cb) {
     // Addionally wrap into findById
     // Looks like delete will be always suuccessful
     // use getById to check before operation to give error
-    db.getById(data.id, (e) => {
-        if(e) { 
-            return cb(e); 
-        }
-        db.deleteById(data.id, (e2) => {
-            if(e2) { 
-                return cb(e2); 
-            }
+    db.getById(data.id, w.error(cb,() => {
+        db.deleteById(data.id, w.error(cb, () => {
             cb(null, data);
-        });
-    });
+        }));
+    }));
 };
 
 /*
@@ -153,17 +147,11 @@ service.update = function(db, id, data, cb) {
         return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
     }
 
-    db.getById(id, (e) => {
-        if(e) { 
-            return cb(e); 
-        }
-        db.update(id, data, (errorUpdate, responseUpdate) => {
-            if(errorUpdate) { 
-                return cb(errorUpdate); 
-            }
+    db.getById(id, w.error(cb ,() => {
+        db.update(id, data, w.error(cb, (responseUpdate) => {
             cb(null, responseUpdate);
-        });
-    });
+        }));
+    }));
 };
 
 exports = module.exports = service;
