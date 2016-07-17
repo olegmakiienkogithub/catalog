@@ -24,7 +24,7 @@ describe('service/advert', function() {
 
             function requiredField(factoryName, name) {
                 it(`requires ${name} for a ${factoryName} car`, function(done){
-                    let advert = factory.attributes(factoryName, {}, { noId: true, omit: name });
+                    let advert = factory.attributes(factoryName, {}, { omit: name });
                     subject.create({}, advert, (e, data) => {
                         assert.ok(e.indexOf(`instance requires property "${name}"`) > -1);
                         done();
@@ -34,7 +34,7 @@ describe('service/advert', function() {
 
             function wrongField(factoryName, name, value, message) {
                 it(`validates "${name}" for a "${factoryName}" car, expect message: "${message}"`, function(done){
-                    let advert = factory.attributes(factoryName, {}, { noId: true });
+                    let advert = factory.attributes(factoryName);
                     advert[name] = value;
                     subject.create({}, advert, (e, data) => {
                         assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
@@ -78,7 +78,7 @@ describe('service/advert', function() {
     });
 
     it('save record and return its data. Assign ID', function(done) {
-        let advert = factory.attributes('usedAdvert', {}, { noId: true });
+        let advert = factory.attributes('usedAdvert');
         assert.equal(advert.id, undefined);
 
         let id = uuid.v4();
@@ -101,8 +101,8 @@ describe('service/advert', function() {
     });
 
     it('Assign each time new ID', function(done) {
-        let advert = factory.attributes('usedAdvert', {}, { noId: true });
-        let advert2 = factory.attributes('usedAdvert', {}, { noId: true });
+        let advert = factory.attributes('usedAdvert');
+        let advert2 = factory.attributes('usedAdvert');
 
         assert.equal(advert.id, undefined);
         assert.equal(advert2.id, undefined);

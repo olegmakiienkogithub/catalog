@@ -20,7 +20,7 @@ describe('Create advert: POST /advert', function() {
     }
 
     it('create new car', function(done){
-        let advert =  helper.factory.attributes('newAdvert', {}, { noId: true });
+        let advert =  helper.factory.attributes('newAdvert');
         helper.request
             .post('/advert')
             .send(advert)
@@ -32,7 +32,7 @@ describe('Create advert: POST /advert', function() {
     });
 
     it('create used car', function(done){
-        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        let advert =  helper.factory.attributes('usedAdvert');
         helper.request
             .post('/advert')
             .send(advert)
@@ -44,7 +44,7 @@ describe('Create advert: POST /advert', function() {
     });
 
     it('get created used car', function(done){
-        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        let advert =  helper.factory.attributes('usedAdvert');
         async.waterfall([
             (cb) => {
                 helper.request
@@ -70,7 +70,7 @@ describe('Create advert: POST /advert', function() {
     });
 
     it('create car, get it, delete it, get do not return record', function(done){
-        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        let advert =  helper.factory.attributes('usedAdvert');
         async.waterfall([
             (cb) => {
                 helper.request
@@ -129,7 +129,7 @@ describe('Create advert: POST /advert', function() {
 
     it('update not existing car give 400', function(done){
         let id = uuid.v4();
-        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        let advert =  helper.factory.attributes('usedAdvert');
         helper.request
             .post(`/advert/${id}`)
             .send(advert)
@@ -138,7 +138,7 @@ describe('Create advert: POST /advert', function() {
     });
 
     it('create car, update car, get it', function(done){
-        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        let advert =  helper.factory.attributes('usedAdvert');
         async.waterfall([
             (cb) => {
                 helper.request
@@ -196,9 +196,9 @@ describe('Create advert: POST /advert', function() {
 
         it('create 3 adverts, get ordered by title', function(done){
             createAdverts([
-                helper.factory.attributes('usedAdvert', { title: 'Second'}, { noId: true }),
-                helper.factory.attributes('usedAdvert', { title: 'Third'}, { noId: true }),
-                helper.factory.attributes('newAdvert', { title: 'First'}, { noId: true })
+                helper.factory.attributes('usedAdvert', { title: 'Second'}),
+                helper.factory.attributes('usedAdvert', { title: 'Third'}),
+                helper.factory.attributes('newAdvert', { title: 'First'})
             ], () => {
                 helper.request
                     .get('/advert?sort=title')                        
@@ -215,9 +215,9 @@ describe('Create advert: POST /advert', function() {
 
         it('create 3 adverts, get ordered by fuel type', function(done){
             createAdverts([
-                helper.factory.attributes('usedAdvert', { fuel: 'gasoline'}, { noId: true }),
-                helper.factory.attributes('usedAdvert', { fuel: 'gasoline'}, { noId: true }),
-                helper.factory.attributes('newAdvert', { fuel: 'diesel'}, { noId: true })
+                helper.factory.attributes('usedAdvert', { fuel: 'gasoline'}),
+                helper.factory.attributes('usedAdvert', { fuel: 'gasoline'}),
+                helper.factory.attributes('newAdvert', { fuel: 'diesel'})
             ], () => {
                 helper.request
                     .get('/advert?sort=fuel')                        
@@ -234,9 +234,9 @@ describe('Create advert: POST /advert', function() {
 
         it('create 3 adverts, get ordered by price', function(done){
             createAdverts([
-                helper.factory.attributes('usedAdvert', { price: 100 }, { noId: true }),
-                helper.factory.attributes('usedAdvert', { price: 10 }, { noId: true }),
-                helper.factory.attributes('newAdvert', { price: 70 }, { noId: true })
+                helper.factory.attributes('usedAdvert', { price: 100 }),
+                helper.factory.attributes('usedAdvert', { price: 10 }),
+                helper.factory.attributes('newAdvert', { price: 70 })
             ], () => {
                 helper.request
                     .get('/advert?sort=price')                        
@@ -253,10 +253,10 @@ describe('Create advert: POST /advert', function() {
 
         it('create 4 adverts, get default order by id', function(done){
             createAdverts([
-                helper.factory.attributes('usedAdvert', { }, { noId: true }),
-                helper.factory.attributes('usedAdvert', { }, { noId: true }),
-                helper.factory.attributes('newAdvert', { }, { noId: true }),
-                helper.factory.attributes('newAdvert', { }, { noId: true })
+                helper.factory.attributes('usedAdvert'),
+                helper.factory.attributes('usedAdvert'),
+                helper.factory.attributes('newAdvert'),
+                helper.factory.attributes('newAdvert')
             ], () => {
                 helper.request
                     .get('/advert')                        
