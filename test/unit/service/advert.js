@@ -160,14 +160,90 @@ describe('service/advert', function() {
 
         it('get record', function(done) {
             let id = uuid.v4();
-            let dbResponse = { Item: {a: 'b'} };
+            let dbResponse = {a: 'b'};
             
             subject.getById({
                 getById: (id, cb) => {
                     cb(null, dbResponse);
                 }
             }, { id: id }, (e, data) => {
-                assert.deepEqual(data, dbResponse.Item);
+                assert.deepEqual(data, dbResponse);
+                done();
+            });
+        });
+
+        it('get record, not found error', function(done) {
+            let id = uuid.v4();
+            
+            subject.getById({
+                getById: (id, cb) => {
+                    cb('error string');
+                }
+            }, { id: id }, (e, data) => {
+                assert.equal(e, 'error string');
+                done();
+            });
+        });
+
+    });
+
+    describe('deleteById', function() {
+
+        describe('validation', function() {
+
+            it(`requires Id`, function(done){
+                subject.deleteById({}, {}, (e, data) => {
+                    assert.ok(e.indexOf(`instance requires property "id"`) > -1, `"${e}" to include id`);
+                    done();
+                });
+            });
+            
+
+            function wrongField(name, value, message) {
+                it(`validates format "${name}", expect message: "${message}"`, function(done){
+                    let data = {};
+                    data[name] = value;
+                    subject.deleteById({}, data, (e, data) => {
+                        assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
+                        done();
+                    });
+                });
+            }
+
+            wrongField('id', null, 'instance.id is not of a type(s) string');
+            wrongField('id', '', 'instance.id does not conform to the "uuid" format');
+            wrongField('id', '123-123-123-123', 'instance.id does not conform to the "uuid" format');
+            wrongField('id', uuid.v4() + '1', 'instance.id does not conform to the "uuid" format');
+        });
+
+        it('delete record', function(done) {
+            let id = uuid.v4();
+            let dbResponse = {a: 'b'};
+            let dbResponseDelete = {a: 'c'};
+            
+            subject.deleteById({
+                getById: (id, cb) => {
+                    cb(null, dbResponse);
+                },
+                deleteById: (id, cb) => {
+                    cb(null, dbResponseDelete);  
+                }
+            }, { id: id }, (e, data) => {
+                assert.deepEqual(data, { id: id });
+                done();
+            });
+        });
+
+        it('delete record, not found error', function(done) {
+            let id = uuid.v4();
+            let dbResponse = { };
+            
+            subject.deleteById({
+                getById: (id, cb) => {
+                    cb('error');
+                }
+            }, { id: id }, (e, data) => {
+                assert.equal(e, 'error');
                 done();
             });
         });

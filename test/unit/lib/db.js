@@ -25,9 +25,26 @@ describe('lib/db', function() {
         // stubbed instance
         let instance = new subject({
             listTables: (cb) => { calledWith = true; cb(); }
-        }, { });
+        }, {});
         instance._listTables(() => {
             assert.equal(calledWith, true);
+            done();
+        });
+    });
+
+    it('getById call get', function(done) {
+        let calledWith = null;
+        // stubbed instance
+        let instance = new subject({}, {
+            get: (schema, cb) => { calledWith = schema; cb(null , {}); }
+        });
+        instance.getById('test', () => {
+            assert.deepEqual(calledWith, {
+                TableName: 'advert',
+                Key: {
+                    id: 'test'
+                }
+            });
             done();
         });
     });

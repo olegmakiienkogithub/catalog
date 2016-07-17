@@ -75,8 +75,43 @@ service.getById = function(db, data, cb) {
     }
     db.getById(data.id, (e, record) => {
         if(e) { return cb(e); }
-        cb(null, record.Item); // return back full object
+        cb(null, record); // return back full object
     });
-}
+};
+
+/*
+    Delete by ID 
+ */
+service.deleteById = function(db, data, cb) {
+    let schema = {
+        type: 'object',
+        additionalProperties: false,
+        required: [
+            'id'
+        ],
+        properties: {
+            id: { '$ref': '/definitions/advert/id' }
+        }
+    };
+    let validationResult = v.validate(data, schema);
+
+    if(!validationResult.valid) {
+        return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
+    }
+    // Addionally wrap into findById
+    // Looks like delete will be always suuccessful
+    // use getById to check before operation to give error
+    db.getById(data.id, (e) => {
+        if(e) { 
+            return cb(e); 
+        }
+        db.deleteById(data.id, (e2) => {
+            if(e2) { 
+                return cb(e2); 
+            }
+            cb(null, data);
+        });
+    });
+};
 
 exports = module.exports = service;

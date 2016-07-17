@@ -6,6 +6,7 @@ const AWS = require('../../lib/aws');
 const random = require('random-js')();
 const settings = require('../../lib/settings');
 const async = require('async');
+const uuid = require('node-uuid');
 
 describe('Create advert: POST /advert', function() {
 
@@ -42,7 +43,7 @@ describe('Create advert: POST /advert', function() {
             .end(done);
     });
 
-    it('get cerated used car', function(done){
+    it('get created used car', function(done){
         let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
         async.waterfall([
             (cb) => {
@@ -66,6 +67,66 @@ describe('Create advert: POST /advert', function() {
                     });
             }
         ], done);
-        
     });
+
+    it('create car, get it, delete it, get do not return record', function(done){
+        let advert =  helper.factory.attributes('usedAdvert', {}, { noId: true });
+        async.waterfall([
+            (cb) => {
+                helper.request
+                    .post('/advert')
+                    .send(advert)
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        cb(null, response.body.data.id);
+                    });
+            },
+            (id, cb) => {
+                helper.request
+                    .get(`/advert/${id}`)
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        console.log(response.body);
+
+                        assertAdvert(advert, response.body.data);
+                        cb(null, id);
+                    });
+            },
+            (id, cb) => {
+                helper.request
+                    .delete(`/advert/${id}`)
+                    .expect(200)
+                    .end(function(err, response){
+                        if (err) { return cb(err); }
+                        assert.equal(id, response.body.data.id);
+                        cb(null, id);
+                    });
+            },
+            (id, cb) => {
+                helper.request
+                    .get(`/advert/${id}`)
+                    .expect(400)
+                    .end(cb);
+            },
+        ], done); 
+    });
+
+    it('delete not existing car give 400', function(done){
+        let id = uuid.v4();
+        helper.request
+            .delete(`/advert/${id}`)
+            .expect(400)
+            .end(done);
+    });
+
+    it('get not existing car give 400', function(done){
+        let id = uuid.v4();
+        helper.request
+            .get(`/advert/${id}`)
+            .expect(400)
+            .end(done);
+    });
+
 });

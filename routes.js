@@ -28,4 +28,16 @@ exports.setup = function(app, db) {
             res.json({ data: data });
         });
     });
+
+    /*
+        Delete by ID
+     */
+    app.delete('/advert/:id', function(req, res) {
+        advertService.deleteById(db, { id: req.params.id }, (e, data) => {
+            if(e) {
+                return res.status(400).json({ error: e });
+            }
+            res.json({ data: data });
+        });
+    });
 };
