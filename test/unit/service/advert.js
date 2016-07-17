@@ -128,4 +128,36 @@ describe('service/advert', function() {
         ], done);
     });
 
+
+    describe('getById', function() {
+
+        describe('validation', function() {
+
+            it(`requires Id`, function(done){
+                subject.getById({}, {}, (e, data) => {
+                    assert.ok(e.indexOf(`instance requires property "id"`) > -1, `"${e}" to include id`);
+                    done();
+                });
+            });
+            
+
+            function wrongField(name, value, message) {
+                it(`validates format "${name}", expect message: "${message}"`, function(done){
+                    let data = {};
+                    data[name] = value;
+                    subject.getById({}, data, (e, data) => {
+                        assert.ok(e.indexOf(message) > -1, `"${e}" to include ${message}`);
+                        done();
+                    });
+                });
+            }
+
+            wrongField('id', null, 'instance.id is not of a type(s) string');
+            wrongField('id', '', 'instance.id does not conform to the "uuid" format');
+            wrongField('id', '123-123-123-123', 'instance.id does not conform to the "uuid" format');
+            wrongField('id', uuid.v4() + '1', 'instance.id does not conform to the "uuid" format');
+
+        });
+    });
+
 });

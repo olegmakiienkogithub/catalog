@@ -4,7 +4,9 @@ const uuid = require('node-uuid');
 const v = require('../lib/validator');
 
 const service = {};
-
+/*
+    Create
+ */
 service.create = function(db, data, cb) {
     /*
         For now complicated schema, probabaly will be moved
@@ -52,5 +54,29 @@ service.create = function(db, data, cb) {
         cb(null, data); // return back full object
     });
 };
+/*
+    Get by ID 
+ */
+service.getById = function(db, data, cb) {
+    let schema = {
+        type: 'object',
+        additionalProperties: false,
+        required: [
+            'id'
+        ],
+        properties: {
+            id: { '$ref': '/definitions/advert/id' }
+        }
+    };
+    let validationResult = v.validate(data, schema);
+
+    if(!validationResult.valid) {
+        return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
+    }
+    db.getById(data.id, (e, record) => {
+        if(e) { return cb(e); }
+        cb(null, record.Item); // return back full object
+    });
+}
 
 exports = module.exports = service;
