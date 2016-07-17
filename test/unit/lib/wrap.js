@@ -29,24 +29,4 @@ describe('lib/wrap', function() {
         });
     });
 
-    describe('handler', function() {
-        it('proxy callback with error if error set', function(done) {
-            let func = subject.handler('dummy name', (error, data) => {
-                assert.equal(error, 'error is set');
-                done();
-            });
-            func('error is set');
-        });
-
-        it('proxy callback with success if error not set', function(done) {
-            let func = subject.handler('dummy name', (error, data) => {
-                assert.equal(error, null);
-                assert.equal(data, 'error is NOT set');
-                done();
-            });
-            func(null, 'error is NOT set');
-        });
-    });
-       
-
 });

@@ -12,7 +12,7 @@ service.create = function(db, data, cb) {
     /*
         For now complicated schema, probabaly will be moved
      */
-    let newCarSchema = {
+    let carSchema = {
         type: 'object',
         additionalProperties: false,
         required: [
@@ -25,24 +25,16 @@ service.create = function(db, data, cb) {
             new: { type: 'boolean', enum: [true] }
         }
     };
-    let usedCarSchema = {
-        type: 'object',
-        additionalProperties: false,
-        required: [
-            'title', 'fuel', 'price', 'new', 'mileage', 'firstRegistration'
-        ],
-        properties: {
-            title: { '$ref': '/definitions/advert/title' },
-            fuel: { '$ref': '/definitions/advert/fuel' },
-            price: { '$ref': '/definitions/advert/price' },
-            new: { type: 'boolean', enum: [false] },
-            mileage: { '$ref': '/definitions/advert/mileage' },
-            firstRegistration: { '$ref': '/definitions/advert/firstRegistration' }
-        }
-    };
 
-    let schema = (data.new === undefined || data.new === true ? newCarSchema : usedCarSchema); // new by default
-    let validationResult = v.validate(data, schema);
+    if(data.new !== undefined && data.new === false) {
+        carSchema.required.push('mileage');
+        carSchema.required.push('firstRegistration');
+        carSchema.properties.new.enum = [false];
+        carSchema.properties.mileage =  { '$ref': '/definitions/advert/mileage' };
+        carSchema.properties.firstRegistration = { '$ref': '/definitions/advert/firstRegistration' };
+    }
+    
+    let validationResult = v.validate(data, carSchema);
 
     if(!validationResult.valid) {
         return cb(validationResult.errors.map(i => `${i.property} ${i.message}`));
