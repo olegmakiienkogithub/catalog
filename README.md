@@ -179,8 +179,8 @@ npm run jshint
 - no logger uses, just plain console.log to keep project simple
 - `jsonschema` used to reduce amount of if's, it helps when there are big amount of parameters, adding new ones will have less efforts
 - all setup and run scripts runned by 'npm' except setup.sh
-- 'action' has controller + service funcitonality (from MVC), kept in one file to be simple
-- 
+- action folder has controller + service funcitonality (from MVC), kept in one file to be simple
+
 
 
 
